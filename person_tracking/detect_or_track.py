@@ -18,11 +18,14 @@ from utils.torch_utils import select_device, load_classifier, time_synchronized,
 from sort import *
 
 
-"""Function to Draw Bounding boxes"""
+"""Function to Draw Bounding boxes and record their corner Coordinates."""
 def draw_boxes(img, bbox, identities=None, categories=None, confidences = None, names=None, colors = None):
+    #bbox_info = {}
     for i, box in enumerate(bbox):
         x1, y1, x2, y2 = [int(i) for i in box]
+        #bbox_info[i] = [(x1, y1), (x2, y1), (x1, y2), (x2, y2)]
         tl = opt.thickness or round(0.002 * (img.shape[0] + img.shape[1]) / 2) + 1  # line/font thickness
+
 
         cat = int(categories[i]) if categories is not None else 0
         id = int(identities[i]) if identities is not None else 0
@@ -41,8 +44,7 @@ def draw_boxes(img, bbox, identities=None, categories=None, confidences = None, 
             cv2.rectangle(img, (x1, y1), c2, color, -1, cv2.LINE_AA)  # filled
             cv2.putText(img, label, (x1, y1 - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
 
-
-    return img
+    return img, (x1, y1), (x2, y1), (x1, y2), (x2, y2)
 
 
 def detect(save_img=False):
@@ -81,9 +83,8 @@ def detect(save_img=False):
     if webcam:
         view_img = check_imshow()
         cudnn.benchmark = True  # set True to speed up constant image size inference
-        #dataset = LoadStreams(source, img_size=imgsz, stride=stride)
-        #dataset.
-        dataset = LoadWebcam(source, img_size=imgsz, stride=stride)
+        dataset = LoadStreams(source, img_size=imgsz, stride=stride)
+        #dataset = LoadWebcam(source, img_size=imgsz, stride=stride)
     else:
         dataset = LoadImages(source, img_size=imgsz, stride=stride)
 
@@ -186,12 +187,9 @@ def detect(save_img=False):
                     identities = None
                     categories = dets_to_sort[:, 5]
                     confidences = dets_to_sort[:, 4]
-                
-                im0 = draw_boxes(im0, bbox_xyxy, identities, categories, confidences, names, colors)
 
-                
-                    
-                
+                im0, top_left, top_right, bottom_left, bottom_right = draw_boxes(im0, bbox_xyxy, identities, categories, confidences, names, colors)
+                #print(bbox_info)
                 
             # Print time (inference + NMS)
             print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
