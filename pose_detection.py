@@ -35,9 +35,10 @@ with mp_pose.Pose(
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     results = pose.process(image)
-    landmarks = results.pose_landmarks.landmark
+    landmarks = results.pose_landmarks
     
     if (landmarks):
+        landmarks = results.pose_landmarks.landmark
         x_max = 0
         y_max = 0
         x_min = w
@@ -53,7 +54,7 @@ with mp_pose.Pose(
            if y < y_min:
                    y_min = y
                
-    cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+        cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
     
     
     # Draw the pose annotation on the image.
