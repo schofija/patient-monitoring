@@ -5,6 +5,11 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from my_robot_interfaces.msg import Person
 from numpy import asarray
+import mediapipe as mp
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_pose = mp.solutions.pose
+
 
 class ImageSubscriber:
     def __init__(self):
@@ -23,62 +28,72 @@ class ImageSubscriber:
         self.bridge = CvBridge()
         self.publisher = self.node.create_publisher(Person, 'person', 1)
 
-        # Load YOLO
-        self.net = cv2.dnn.readNetFromDarknet('/home/pmr/ros2_ws/src/my_package/my_package/yolov3.cfg', '/home/pmr/ros2_ws/src/my_package/my_package/yolov3.weights')
-        self.classes = []
-        with open('/home/pmr/ros2_ws/src/my_package/my_package/coco.names', 'r') as f:
-            self.classes = [line.strip() for line in f.readlines()]
-
     def image_callback(self, msg):
-        # Convert the image data from ROS Image message to OpenCV format
-        depth = asarray(self.depth)
-        #depth = self.bridge.imgmsg_to_cv2(self.depth, 'bgr8') # Create local copy of depth b/c we may have new depth info by the time we publish
         cv_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
         #image = np.array(cv_image)
-
-        # Image detection with Yolo
-        # Detect objects in the image
-        blob = cv2.dnn.blobFromImage(cv_image, 1 / 255.0, (416, 416), [0, 0, 0], swapRB=True, crop=False)
-
-        self.net.setInput(blob)
-        outputs = self.net.forward(self.net.getUnconnectedOutLayersNames())
-
-
+        h, w, c = cv_image.shape
+        
         person_detected = Person()
-        person_detected.x = -1.
-        person_detected.y = -1.
-        person_detected.w = -1.
-        person_detected.h = -1.
+        person_detected.x = -1
+        person_detected.y = -1
+        person_detected.w = -1
+        person_detected.h = -1
         person_detected.depth = 0
+        
+        # Detect objects in the image using mediapipe
+        with mp_pose.Pose(
+                min_detection_confidence=0.5,
+                min_tracking_confidence=0.5) as pose:
 
-        for output in outputs:
-            for detection in output:
-                scores = detection[5:]
-                class_id = np.argmax(scores)
-                confidence = scores[class_id]
-                if confidence > 0.5 and self.classes[class_id] == 'person':
-                    x, y, w, h = (detection[0:4] * np.array([cv_image.shape[1], cv_image.shape[0], cv_image.shape[1], cv_image.shape[0]])).astype('int')
-                    cv2.rectangle(cv_image, (x-w//2, y-h//2), (x + w//2, y + h//2), (0, 255, 0), 2)
-                    label = '{}: {:.2f}'.format(self.classes[class_id], confidence)
-                    cv2.putText(cv_image, label, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-                    person_detected = Person()
-                    person_detected.x = float(detection[0])
-                    person_detected.y = float(detection[1])
-                    person_detected.w = float(detection[2])
-                    person_detected.h = float(detection[3])
-                    person_detected.depth = 0
-                    print(person_detected.h)
-                    # The next 4 lines ensure the first person detected is the one published
-                    break
-                else:
-                    continue
-            break
+               	results = pose.process(cv_image)
+               	landmarks=results.pose_landmarks
 
-        self.publisher.publish(person_detected)
+               	if (landmarks):
+                    landmarks = results.pose_landmarks.landmark
+                    x_max = 0
+                    y_max = 0
+                    x_min = w
+                    y_min = h
+                    for lm in landmarks:
+                        x, y = int(lm.x * w), int(lm.y *h)
+                        if x > x_max:
+                           x_max = x
+                        if x < x_min:
+                            x_min = x
+                        if y > y_max:
+                            y_max = y
+                        if y < y_min:
+                            y_min = y
+                    print(x_min, x_max, y_min, y_max)
+                    person_detected.x = (x_max + x_min)//2
+                    #person_detected.y = -1.
+                    #person_detected.w = -1.
+                    #person_detected.h = -1.
+                    #person_detected.depth = 0
+                    cv2.rectangle(cv_image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+
+               	cv_image.flags.writeable = True
+               #cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
+               	mp_drawing.draw_landmarks(
+                       cv_image,
+                       results.pose_landmarks,
+                       mp_pose.POSE_CONNECTIONS,
+        			   landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+						 
+                self.publisher.publish(person_detected)
+                
+               	cv2.imshow('cv_image', cv_image)
+               	cv2.waitKey(1)
+
+
+
+        # Draw BBoxes
+
+        #self.publisher.publish(person_detected)
         
         # Display the processed image
-        cv2.imshow('cv_image', cv_image)
-        cv2.waitKey(1)
+        #cv2.imshow('cv_image', cv_image)
+        #cv2.waitKey(1)
 
     def depth_callback(self, msg):
         self.depth = msg
