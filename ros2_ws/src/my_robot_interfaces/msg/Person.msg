@@ -2,4 +2,5 @@ int64 x
 int64 y
 int64 w
 int64 h
-int64 depth
+float64 depth
+PersonLandmark[] landmarks

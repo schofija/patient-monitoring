@@ -43,10 +43,14 @@ class PatientSubscriber:
                 print("rotate RIGHT, msg_in.x==", msg_in.x)
                 msg_out.angular.z = (-1.) * self.max_ang #- self.max_ang * (0.5 - msg_in.x + self.ang_thresh)
                 self.last_spotted_x = 2
-#            if msg_in.h > .7 :
-#                msg_out.linear.x = -.1 # Move backwards with speed proportional to how close the person is
-#            elif msg_in.h < 0.65 :
-#                msg_out.linear.x = .1 # Move forwards with speed proportional to how distant the person is
+            if msg_in.depth > 1500. :
+                print("FORWARD, msg_in.depth==", msg_in.depth)
+                msg_out.linear.x = .05
+            elif msg_in.depth < 1250. :
+                print("BACKWARD, msg_in.depth==", msg_in.depth)
+                msg_out.linear.x = -.125
+            #elif msg_in.h < 0.65 :
+                #msg_out.linear.x = .1 # Move forwards with speed proportional to how distant the person is
             # Have another case for depth == 0 where velocity is determined based on height and width of identified blob
 
         self.publisher.publish(msg_out)

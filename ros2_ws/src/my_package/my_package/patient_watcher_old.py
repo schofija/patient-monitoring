@@ -1,8 +1,3 @@
-"""
-patient_watcher.py
-authors: aadi, jack, null
-"""
-
 import rclpy
 import numpy as np
 import cv2
@@ -18,28 +13,32 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
-import rclpy
-from rclpy.node import Node
-from sensor_msgs.msg import Image, CameraInfo
-from message_filters import Subscriber, TimeSynchronizer
 
-class MyNode(Node):
+class ImageSubscriber(Node):
     def __init__(self):
-        super().__init__('my_node')
-        
+        self.depth = None
+        self.node = rclpy.create_node('image_subscriber')
+        self.subscription_2 = self.node.create_subscription(
+            Image,
+            '/camera/aligned_depth_to_color/image_raw',
+            self.depth_callback,
+            1)
+        self.subscription_1 = self.node.create_subscription(
+            Image,
+            '/camera/color/image_rect_raw',
+            self.image_callback,
+           1)
         self.bridge = CvBridge()
-        self.publisher1 = self.create_publisher(Person, 'person', 1)
-        
-        color_sub = Subscriber(self, Image, '/camera/color/image_rect_raw')
-        depth_sub = Subscriber(self, Image, '/camera/aligned_depth_to_color/image_raw')
+        self.publisher1 = self.node.create_publisher(Person, 'person', 1)
+         #In case anyone needs a version of the topic with buffers:
+        self.publisher2 = self.node.create_publisher(Person, 'buffered_person', 10)
 
-        ts = TimeSynchronizer([color_sub, depth_sub], 10)
-        ts.registerCallback(self.callback)
-
-    def callback(self, msg: Image, msg_depth: Image):
+    def image_callback(self, msg, msg_depth):
         cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-        depth_image = self.bridge.imgmsg_to_cv2(msg_depth, msg_depth.encoding)
-
+        cv_image = self.bridge.imgmsg_to_cv2(msg_depth, msg_depth.encoding)
+        # Save current depth image so we aren't using a newer one when we go to get depth for this image
+        #depth_image = asarray(self.depth)
+        #image = np.array(cv_image)
         h, w, c = cv_image.shape
         
         person_detected = Person()
@@ -47,7 +46,7 @@ class MyNode(Node):
         person_detected.y = -1
         person_detected.w = -1
         person_detected.h = -1
-        person_detected.depth = 0.
+        person_detected.depth = 0
 
         person_detected.landmarks = []
         
@@ -85,21 +84,18 @@ class MyNode(Node):
                     # depth_x and depth_y are coordinates we want to get depth from
                     #depth_x, depth_y
                     # person_detected.depth is the actual depth
-                    person_detected.depth = 0.
-                    
+                    person_detected.depth = 0
+#DEPTH GRABBING BLOCK HERE
                     #print(x_min, x_max, y_min, y_max)
                     person_detected.x = (x_max + x_min)//2
                     person_detected.y = (y_max + y_min)//2
                     person_detected.w = x_max - x_min
                     person_detected.h = y_max - y_min
-                    if(person_detected.x < 424 and person_detected.y < 240):
-                        person_detected.depth = float(depth_image[person_detected.y, person_detected.x])
-                        line = '\rPerson detected! (%3d, %3d): %7.1f(mm).' % (person_detected.x, person_detected.y, depth_image[person_detected.y, person_detected.x])
-                        print(line)
+                    person_detected.depth = 0
 
                     cv2.rectangle(cv_image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
                	    cv_image.flags.writeable = True
-                    
+               #cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
                	mp_drawing.draw_landmarks(
                        cv_image,
                        results.pose_landmarks,
@@ -107,20 +103,41 @@ class MyNode(Node):
         			   landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
 						 
                 self.publisher1.publish(person_detected)
-                #self.publisher2.publish(person_detected)
+                self.publisher2.publish(person_detected)
                 
-               	cv2.imshow('cv_image', cv_image)
-               	cv2.waitKey(1)
+               	#cv2.imshow('cv_image', cv_image)
+               	#cv2.waitKey(1)
 
-def main(args=None):
-    rclpy.init(args=args)
 
-    node = MyNode()
 
-    rclpy.spin(node)
+        # Draw BBoxes
 
-    node.destroy_node()
-    rclpy.shutdown()
+        #self.publisher.publish(person_detected)
+        
+        # Display the processed image
+        #cv2.imshow('cv_image', cv_image)
+        #cv2.waitKey(1)
+
+    def depth_callback(self, msg):
+        #print("here!")
+        #self.depth = msg
+        print(person.x)
+        cv_image = self.bridge.imgmsg_to_cv2(msg, msg.encoding)
+        #indices = np.array(np.where(cv_image == cv_image[cv_image > 0].min()))[:,0]
+        ##pix = (indices[1], indices[0])
+        ##self.pix = pix
+        pix = (212, 120)
+        line = '\rDepth at pixel(%3d, %3d): %7.1f(mm).' % (pix[0], pix[1], cv_image[pix[1], pix[0]])
+        print(line)
+        cv2.rectangle(cv_image, (10, 30), (20, 40), (0, 255, 255), 2)
+        cv2.imshow('cv_image', cv_image)
+        cv2.waitKey(1)
+
+
+def main():
+    rclpy.init()
+    image_sub = ImageSubscriber()
+    rclpy.spin(image_sub.node)
 
 if __name__ == '__main__':
     main()
