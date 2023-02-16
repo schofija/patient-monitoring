@@ -20,7 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'my_node = my_package.my_node:main'
+            'my_node = my_package.my_node:main',
+            'patient_follower = my_package.patient_follower:main',
+            'patient_watcher = my_package.patient_watcher:main',
         ],
     },
 )
