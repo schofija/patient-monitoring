@@ -57,16 +57,18 @@ with mp_pose.Pose(
     landmarks = results.pose_landmarks
     
     
-    if (landmarks):
+    if (current_time - start_time) >= interval:
         landmarks = results.pose_landmarks.landmark
-        if (current_time - start_time) >= interval:
-            for i in [0,len(landmarks)-1]:
-               temp =  math.sqrt(abs(landmarks[i].x**2 - landmarks[i].y**2))
-               l.append(temp)
-               with open(file_path, 'a', newline='') as csv_file:
-                    writer = csv.writer(csv_file)
-                    writer.writerow(l)
-            start_time = current_time
+        for i in range(0,len(landmarks)):
+            # if (current_time - start_time) >= interval:
+            temp =  math.sqrt(abs(landmarks[i].x**2 - landmarks[i].y**2))
+            l.append(temp)
+        print(l)
+        with open(file_path, 'a', newline='') as csv_file:
+             writer = csv.writer(csv_file)
+             writer.writerow(l)
+        start_time = current_time
+        l = []
         
         x_max = 0
         y_max = 0
