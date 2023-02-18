@@ -33,8 +33,8 @@ file_name = 'pose_csv_file.csv'
 file_path = os.path.join(folder_path, file_name)
 
 with mp_pose.Pose(
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5) as pose:
+    min_detection_confidence=0.8,
+    min_tracking_confidence=0.8) as pose:
   while cap.isOpened():
     success, image = cap.read()
     current_time = time.time()
