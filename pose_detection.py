@@ -8,6 +8,11 @@ Created on Sun Feb  5 03:31:56 2023
 import cv2
 import mediapipe as mp
 import numpy as np
+import math
+import time
+import csv
+import os
+
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
@@ -17,13 +22,27 @@ mp_pose = mp.solutions.pose
 cap = cv2.VideoCapture(0)
 _, frame = cap.read()
 h, w, c = frame.shape
+l = []
+
+# intialise variables
+start_time = time.time()
+interval = 1
+
+folder_path = 'C:/Users/user'
+file_name = 'pose_csv_file.csv'
+file_path = os.path.join(folder_path, file_name)
 
 with mp_pose.Pose(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5) as pose:
   while cap.isOpened():
     success, image = cap.read()
-   
+    current_time = time.time()
+    # Check if file exists in folder
+    if not os.path.exists(file_path):
+        # Create new file with header row
+        with open(file_path, 'w', newline='') as csv_file:
+            writer = csv.writer(csv_file)
 
     if not success:
       print("Ignoring empty camera frame.")
@@ -37,8 +56,18 @@ with mp_pose.Pose(
     results = pose.process(image)
     landmarks = results.pose_landmarks
     
+    
     if (landmarks):
         landmarks = results.pose_landmarks.landmark
+        if (current_time - start_time) >= interval:
+            for i in [0,len(landmarks)-1]:
+               temp =  math.sqrt(abs(landmarks[i].x**2 - landmarks[i].y**2))
+               l.append(temp)
+               with open(file_path, 'a', newline='') as csv_file:
+                    writer = csv.writer(csv_file)
+                    writer.writerow(l)
+            start_time = current_time
+        
         x_max = 0
         y_max = 0
         x_min = w
@@ -60,6 +89,7 @@ with mp_pose.Pose(
     # Draw the pose annotation on the image.
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    # image = np.zeros((frame.shape[0], frame.shape[1], 3), dtype=np.uint8)
     mp_drawing.draw_landmarks(
         image,
         results.pose_landmarks,
