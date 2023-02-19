@@ -23,6 +23,7 @@ setup(
             'my_node = my_package.my_node:main',
             'patient_follower = my_package.patient_follower:main',
             'patient_watcher = my_package.patient_watcher:main',
+            'pose_detection = my_package.pose_detection:main',
         ],
     },
 )
