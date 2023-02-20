@@ -1,6 +1,10 @@
-# patient_monitoring
-Patient Monitoring Robot
+# patient-monitoring
 Jack Schofield, Null Atwood, Travis Hudson, Rohan B Ballapragada, Zachary Taylor, Jet Ittihrit, Aditya Raj
+
+---
+
+The **Patient Monitoring Robot** (PMR) Project attempts to lower cost of the patient care system by replacing human caretakers with an autonomous robot capable of observing the patient in the human's place. This includes trailing the patient and checking for abnormal motion patterns all throughout the day.
+
 
 ### Requirements
 **Hardware:**
