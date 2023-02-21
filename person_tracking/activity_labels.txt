@@ -1,0 +1,5 @@
+1 WALKING 
+2 SITTING           
+3 STANDING          
+4 LAYING
+5 BENDING
