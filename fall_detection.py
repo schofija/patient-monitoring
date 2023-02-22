@@ -80,17 +80,17 @@ with mp_pose.Pose(
         # Extract the coordinates of the shoulder, hip, and mid-point landmarks
         shoulder_left = (landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y)
         shoulder_right = (landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y)
-        hip_left = (landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y)
-        hip_right = (landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y)
+        hip_left = (landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].z)
+        hip_right = (landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].z)
         mid_point = ((shoulder_left[0] + shoulder_right[0])/2, (shoulder_left[1] + shoulder_right[1])/2)
         
         # Calculate the centroid of the person
-        centroid = ((shoulder_left[0] + shoulder_right[0] + mid_point[0] + hip_left[0] + hip_right[0])/5, (shoulder_left[1] + shoulder_right[1] + mid_point[1] + hip_left[1] + hip_right[1])/40*9)
+        centroid = ((shoulder_left[0] + shoulder_right[0] + mid_point[0] + hip_left[0] + hip_right[0])/5, (shoulder_left[1] + shoulder_right[1] + mid_point[1] + hip_left[1] + hip_right[1])/40*9,(hip_left[2]+hip_right[2])/2)
         # Draw a circle at the centroid of the person
-        cv2.circle(image, (int(centroid[0]*frame.shape[1]), int(centroid[1]*frame.shape[0])), 10, (0, 0, 255), -1)
+        cv2.circle(image, (int(centroid[0]*frame.shape[1]), int(centroid[1]*frame.shape[0])), 5, (0, 0, 255), -1)
         
         # fall detection
-        base = (int((x_min+x_max)/2) ,int(y_max))
+        base = (int(centroid[0]*frame.shape[1]) ,int(y_max))
         cv2.circle(image, base, 10, (0, 0, 255), -1)
         if (current_time - start_time) >= interval:
             if prev_centroid is not None:
@@ -98,9 +98,10 @@ with mp_pose.Pose(
                 distance = abs(int(centroid[1]*frame.shape[0]) - y_max)
                 # print("prev",round(prev_distance,2))
                 # print("curr",round(distance,2))
-                change = distance/prev_distance
-                if change<0.4:
-                    print("fall")
+                if prev_distance != 0:
+                    change = distance/prev_distance
+                    if change<0.45:
+                        print("fall")
                 
             prev_centroid = centroid
             start_time = current_time
