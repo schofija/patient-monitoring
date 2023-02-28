@@ -342,5 +342,6 @@ dependencies:
   - zstd=1.5.2=h19a0ad4_0
   - pip:
       - torchaudio==0.13.1
+      - mediapipe==0.9.1.0
 >>>>>>> 22be88616a8b1f098f1c43658b082a0e432ca222
       - torchvision==0.14.1
