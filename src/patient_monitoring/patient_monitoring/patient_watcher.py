@@ -6,9 +6,10 @@ authors: aadi, jack, null
 import rclpy
 import numpy as np
 import cv2
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge
 from my_robot_interfaces.msg import Person
+from my_robot_interfaces.msg import PersonLandmark
 from numpy import asarray
 import mediapipe as mp
 from rclpy.node import Node
@@ -29,14 +30,15 @@ class MyNode(Node):
         
         self.bridge = CvBridge()
         self.publisher1 = self.create_publisher(Person, 'person', 1)
-        
         color_sub = Subscriber(self, Image, '/camera/color/image_rect_raw')
         depth_sub = Subscriber(self, Image, '/camera/aligned_depth_to_color/image_raw')
+        info_sub = Subscriber(self, Image, '/camera/aligned_depth_to_color/camera_info')
 
-        ts = TimeSynchronizer([color_sub, depth_sub], 10)
+
+        ts = TimeSynchronizer([color_sub, depth_sub, info_sub], 10)
         ts.registerCallback(self.callback)
 
-    def callback(self, msg: Image, msg_depth: Image):
+    def callback(self, msg: Image, msg_depth: Image, msg_info: CameraInfo):
         cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         depth_image = self.bridge.imgmsg_to_cv2(msg_depth, msg_depth.encoding)
 
@@ -49,8 +51,6 @@ class MyNode(Node):
         person_detected.h = -1
         person_detected.depth = 0.
 
-        person_detected.landmarks = []
-        
         # Detect objects in the image using mediapipe
         with mp_pose.Pose(
                 min_detection_confidence=0.5,
@@ -65,11 +65,13 @@ class MyNode(Node):
                     y_max = -1
                     x_min = w
                     y_min = h
-                    for i in range(len(landmarks)):
-                        #person_detected.landmarks[i].x = landmarks[i].x
-                        #person_detected.landmarks[i].y = landmarks[i].y
-                        #person_detected.landmarks[i].z = landmarks[i].z
-                        #person_detected.landmarks[i].visibility = landmarks[i].visibility
+                    for i in range(len(landmarks) - 1):
+                        landmark_msg = PersonLandmark()
+                        landmark_msg.x = landmarks[i].x
+                        landmark_msg.y = landmarks[i].y
+                        landmark_msg.z = landmarks[i].z
+                        landmark_msg.visibility = landmarks[i].visibility
+                        person_detected.landmarks.append(landmark_msg)
                         x, y = int(landmarks[i].x * w), int(landmarks[i].y *h)
                         if 0 <= x and x <= w:
                             if x > x_max:
