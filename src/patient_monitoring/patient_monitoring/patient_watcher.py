@@ -32,13 +32,11 @@ class MyNode(Node):
         self.publisher1 = self.create_publisher(Person, 'person', 1)
         color_sub = Subscriber(self, Image, '/camera/color/image_rect_raw')
         depth_sub = Subscriber(self, Image, '/camera/aligned_depth_to_color/image_raw')
-        info_sub = Subscriber(self, Image, '/camera/aligned_depth_to_color/camera_info')
 
-
-        ts = TimeSynchronizer([color_sub, depth_sub, info_sub], 10)
+        ts = TimeSynchronizer([color_sub, depth_sub], 10)
         ts.registerCallback(self.callback)
 
-    def callback(self, msg: Image, msg_depth: Image, msg_info: CameraInfo):
+    def callback(self, msg: Image, msg_depth: Image):
         cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         depth_image = self.bridge.imgmsg_to_cv2(msg_depth, msg_depth.encoding)
 
@@ -50,6 +48,11 @@ class MyNode(Node):
         person_detected.w = -1
         person_detected.h = -1
         person_detected.depth = 0.
+        person_detected.x_min = -1
+        person_detected.x_max = -1
+        person_detected.y_min = -1
+        person_detected.y_max = -1
+
 
         # Detect objects in the image using mediapipe
         with mp_pose.Pose(
@@ -94,6 +97,10 @@ class MyNode(Node):
                     person_detected.y = (y_max + y_min)//2
                     person_detected.w = x_max - x_min
                     person_detected.h = y_max - y_min
+                    person_detected.x_min = x_min
+                    person_detected.x_max = x_max
+                    person_detected.y_min = y_min
+                    person_detected.y_max = y_max
                     if(person_detected.x < 424 and person_detected.y < 240):
                         person_detected.depth = float(depth_image[person_detected.y, person_detected.x])
                         line = '\rPerson detected! (%3d, %3d): %7.1f(mm).' % (person_detected.x, person_detected.y, depth_image[person_detected.y, person_detected.x])

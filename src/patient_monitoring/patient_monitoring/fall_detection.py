@@ -27,7 +27,7 @@ FRAME_HEIGHT = 240
 class FallDetector():
     def __init__(self):
         self.start_time = time.time()
-        self.interval = 1
+        self.interval = 1.
         self.prev_centroid = None
         self.prev_time = None
         self.node = rclpy.create_node('fall_detection')
@@ -38,8 +38,10 @@ class FallDetector():
             1)
     def falldetector_callback(self, msg):
         current_time = time.time()
+
         landmarks = msg.landmarks
-        print(landmarks)        
+        y_max = msg.y_max
+
         if (landmarks):
             print("in if (landmarks): ...")
             shoulder_left = (landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y)
@@ -56,23 +58,27 @@ class FallDetector():
             # fall detection
             #base = (int(centroid[0]*frame.shape[1]) ,int(y_max))
             base = (int(centroid[0]*FRAME_WIDTH) ,int(y_max))
-            cv2.circle(image, base, 10, (0, 0, 255), -1)
-            if (current_time - start_time) >= interval:
+           # cv2.circle(image, base, 10, (0, 0, 255), -1)
+            if (current_time - self.start_time) >= self.interval:
                 print("1 second interval check") 
-                if prev_centroid is not None:
-                    prev_distance = abs(int(prev_centroid[1]*frame.shape[0]) - y_max)
-                    distance = abs(int(centroid[1]*frame.shape[0]) - y_max)
+                if self.prev_centroid is not None:
+                    print("if self.prev_centroid is not None...")
+                    #prev_distance = abs(int(self.prev_centroid[1]*frame.shape[0]) - y_max)
+                    prev_distance = abs(int(self.prev_centroid[1]*FRAME_HEIGHT) - y_max)
+                    #distance = abs(int(centroid[1]*frame.shape[0]) - y_max)
+                    distance = abs(int(centroid[1]*FRAME_HEIGHT) - y_max)
                     # print("prev",round(prev_distance,2))
                     # print("curr",round(distance,2))
                     if prev_distance != 0:
+                        print("if prev_distance != 0")
                         change = distance/prev_distance
                         if change<0.45:
                             print("fall")
                         else:
                             print("no fall")
-
-                prev_centroid = centroid
-                start_time = current_time
+                
+                self.prev_centroid = centroid
+                self.start_time = current_time
 
 def main():
     rclpy.init()
