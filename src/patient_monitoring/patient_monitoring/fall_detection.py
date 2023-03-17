@@ -21,8 +21,8 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
 # Predefined frame width/height
-FRAME_WIDTH = 424
-FRAME_HEIGHT = 240
+#FRAME_WIDTH = 424
+#FRAME_HEIGHT = 240
 
 class FallDetector():
     def __init__(self):
@@ -41,9 +41,11 @@ class FallDetector():
 
         landmarks = msg.landmarks
         y_max = msg.y_max
+        
+        image_width = msg.image_width
+        image_height = msg.image_height
 
         if (landmarks):
-            print("in if (landmarks): ...")
             shoulder_left = (landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y)
             shoulder_right = (landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y)
             hip_left = (landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].z)
@@ -57,25 +59,21 @@ class FallDetector():
 
             # fall detection
             #base = (int(centroid[0]*frame.shape[1]) ,int(y_max))
-            base = (int(centroid[0]*FRAME_WIDTH) ,int(y_max))
+            base = (int(centroid[0]*image_height) ,int(y_max))
            # cv2.circle(image, base, 10, (0, 0, 255), -1)
             if (current_time - self.start_time) >= self.interval:
-                print("1 second interval check") 
                 if self.prev_centroid is not None:
-                    print("if self.prev_centroid is not None...")
                     #prev_distance = abs(int(self.prev_centroid[1]*frame.shape[0]) - y_max)
-                    prev_distance = abs(int(self.prev_centroid[1]*FRAME_HEIGHT) - y_max)
+                    prev_distance = abs(int(self.prev_centroid[1]*image_height) - y_max)
                     #distance = abs(int(centroid[1]*frame.shape[0]) - y_max)
-                    distance = abs(int(centroid[1]*FRAME_HEIGHT) - y_max)
-                    # print("prev",round(prev_distance,2))
-                    # print("curr",round(distance,2))
+                    distance = abs(int(centroid[1]*image_height) - y_max)
                     if prev_distance != 0:
-                        print("if prev_distance != 0")
                         change = distance/prev_distance
+                        print(change, centroid, base)
                         if change<0.45:
-                            print("fall")
+                            print("***FALL DETECTED***")
                         else:
-                            print("no fall")
+                            pass
                 
                 self.prev_centroid = centroid
                 self.start_time = current_time

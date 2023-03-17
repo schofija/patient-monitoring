@@ -47,12 +47,13 @@ class MyNode(Node):
         person_detected.y = -1
         person_detected.w = -1
         person_detected.h = -1
-        person_detected.depth = 0.
+        person_detected.depth = -1
         person_detected.x_min = -1
         person_detected.x_max = -1
         person_detected.y_min = -1
         person_detected.y_max = -1
-
+        person_detected.image_width = w
+        person_detected.image_height = h
 
         # Detect objects in the image using mediapipe
         with mp_pose.Pose(
@@ -90,7 +91,7 @@ class MyNode(Node):
                     # depth_x and depth_y are coordinates we want to get depth from
                     #depth_x, depth_y
                     # person_detected.depth is the actual depth
-                    person_detected.depth = 0.
+                    person_detected.depth = -1
                     
                     #print(x_min, x_max, y_min, y_max)
                     person_detected.x = (x_max + x_min)//2
@@ -101,8 +102,8 @@ class MyNode(Node):
                     person_detected.x_max = x_max
                     person_detected.y_min = y_min
                     person_detected.y_max = y_max
-                    if(person_detected.x < 424 and person_detected.y < 240):
-                        person_detected.depth = float(depth_image[person_detected.y, person_detected.x])
+                    if(person_detected.x < w and person_detected.y < h):
+                        person_detected.depth = int(depth_image[person_detected.y, person_detected.x])
                         line = '\rPerson detected! (%3d, %3d): %7.1f(mm).' % (person_detected.x, person_detected.y, depth_image[person_detected.y, person_detected.x])
                         print(line)
 
