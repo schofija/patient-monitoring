@@ -57,8 +57,8 @@ class MyNode(Node):
 
         # Detect objects in the image using mediapipe
         with mp_pose.Pose(
-                min_detection_confidence=0.5,
-                min_tracking_confidence=0.5) as pose:
+                min_detection_confidence=0.8,
+                min_tracking_confidence=0.8) as pose:
 
                	results = pose.process(cv_image)
                	landmarks=results.pose_landmarks
@@ -103,7 +103,17 @@ class MyNode(Node):
                     person_detected.y_min = y_min
                     person_detected.y_max = y_max
                     if(person_detected.x < w and person_detected.y < h):
-                        person_detected.depth = int(depth_image[person_detected.y, person_detected.x])
+                        person_detected.depth = 0
+                        count = 0
+                        for i in range(-3, 4, 1):
+                            for j in range(-3, 4, 1):
+                                if int(depth_image[person_detected.y + i, person_detected.x + j]) > 0:
+                                    person_detected.depth = person_detected.depth + int(depth_image[person_detected.y + i, person_detected.x + j])
+                                    count = count + 1
+                        if count > 0:
+                            person_detected.depth = person_detected.depth//count
+						
+                        #person_detected.depth = int(depth_image[person_detected.y, person_detected.x])
                         line = '\rPerson detected! (%3d, %3d): %7.1f(mm).' % (person_detected.x, person_detected.y, depth_image[person_detected.y, person_detected.x])
                         print(line)
 
