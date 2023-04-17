@@ -23,6 +23,7 @@ setup(
             'my_node = patient_monitoring.my_node:main',
             'patient_follower = patient_monitoring.patient_follower:main',
             'patient_watcher = patient_monitoring.patient_watcher:main',
+            'patient_watcher_yolo = patient_monitoring.patient_watcher_yolo:main',
             'pose_detection = patient_monitoring.pose_detection:main',
             'fall_detection = patient_monitoring.fall_detection:main'
         ],

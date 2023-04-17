@@ -69,7 +69,7 @@ class FallDetector():
                     distance = abs(int(centroid[1]*image_height) - y_max)
                     if prev_distance != 0:
                         change = distance/prev_distance
-                        print(change, centroid, base)
+                        #print(change, centroid, base)
                         if change<0.45:
                             print("***FALL DETECTED***")
                         else:

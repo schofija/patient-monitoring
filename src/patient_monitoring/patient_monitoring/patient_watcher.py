@@ -57,8 +57,8 @@ class MyNode(Node):
 
         # Detect objects in the image using mediapipe
         with mp_pose.Pose(
-                min_detection_confidence=0.8,
-                min_tracking_confidence=0.8) as pose:
+                min_detection_confidence=0.7,
+                min_tracking_confidence=0.3) as pose:
 
                	results = pose.process(cv_image)
                	landmarks=results.pose_landmarks
