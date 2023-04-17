@@ -69,39 +69,40 @@ class MyNode(Node):
 
         # Assuming the class_id of a person is 0, if not, change it accordingly
         person_class_id = 0
+        print(classes, confidences)
+        if len(classes) > 0 and len(confidences) > 0:
+            for class_id, confidence, box in zip(classes.flatten(), confidences.flatten(), boxes):
+                if class_id == person_class_id:
+                    x, y, w, h = box
+                    cv2.rectangle(cv_image, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
-        for class_id, confidence, box in zip(classes.flatten(), confidences.flatten(), boxes):
-            if class_id == person_class_id:
-                x, y, w, h = box
-                cv2.rectangle(cv_image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                    person_detected.x = int(x + w // 2)
+                    person_detected.y = int(y + h // 2)
+                    person_detected.w = int(w)
+                    person_detected.h = int(h)
+                    person_detected.x_min = int(x)
+                    person_detected.x_max = int(x + w)
+                    person_detected.y_min = int(y)
+                    person_detected.y_max = int(y + h)
 
-                person_detected.x = int(x + w // 2)
-                person_detected.y = int(y + h // 2)
-                person_detected.w = int(w)
-                person_detected.h = int(h)
-                person_detected.x_min = int(x)
-                person_detected.x_max = int(x + w)
-                person_detected.y_min = int(y)
-                person_detected.y_max = int(y + h)
+                    # Depth calculation
+                    if(person_detected.x < img_w and person_detected.y < img_h):
+                        person_detected.depth = 0
+                        count = 0
+                        for i in range(-3, 4, 1):
+                            for j in range(-3, 4, 1):
+                                if int(depth_image[person_detected.y + i, person_detected.x + j]) > 0:
+                                    person_detected.depth = person_detected.depth + int(depth_image[person_detected.y + i, person_detected.x + j])
+                                    count = count + 1
+                        if count > 0:
+                            person_detected.depth = person_detected.depth // count
+                            line = '\rPerson detected! (%3d, %3d): %7.1f(mm).' % (person_detected.x, person_detected.y, depth_image[person_detected.y, person_detected.x])
+                            print(line)
 
-                # Depth calculation
-                if(person_detected.x < img_w and person_detected.y < img_h):
-                    person_detected.depth = 0
-                    count = 0
-                    for i in range(-3, 4, 1):
-                        for j in range(-3, 4, 1):
-                            if int(depth_image[person_detected.y + i, person_detected.x + j]) > 0:
-                                person_detected.depth = person_detected.depth + int(depth_image[person_detected.y + i, person_detected.x + j])
-                                count = count + 1
-                    if count > 0:
-                        person_detected.depth = person_detected.depth // count
-                        line = '\rPerson detected! (%3d, %3d): %7.1f(mm).' % (person_detected.x, person_detected.y, depth_image[person_detected.y, person_detected.x])
-                        print(line)
-
-            self.publisher1.publish(person_detected)
+        self.publisher1.publish(person_detected)
           
-            cv2.imshow('cv_image', cv_image)
-            cv2.waitKey(1)
+        cv2.imshow('cv_image', cv_image)
+        cv2.waitKey(1)
 def main(args=None):
     rclpy.init(args=args)
 
