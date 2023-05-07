@@ -2,7 +2,7 @@
 """
 Created on Tue Feb 21 17:17:13 2023
 
-@author: user
+@author: aadi, jack
 """
 
 import rclpy
@@ -15,14 +15,17 @@ import math
 import time
 import csv
 import os
+import sys
+sys.path.append('/home/pmr/ros2_ws/src/patient_monitoring/patient_monitoring/app')
+
+from send_push import send_push_notification
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
-# Predefined frame width/height
-#FRAME_WIDTH = 424
-#FRAME_HEIGHT = 240
+message = "Patient has fallen"
+device_token = "cpf9L-J9QcSxQXtTBYN3Hf:APA91bHaE6CuzOpnCRVkirDZ7bEMEb2UkYe8Hhyslt8uG_68eGKahoYYpFhihPOVCgLrueUg63L09Ne1AOa7UpEWUQuVQhoVLPceM9Uiflqq4DrC1mtBmKqbSQGtyio4kJueAvpc_1Wr"
 
 class FallDetector():
     def __init__(self):
@@ -71,7 +74,7 @@ class FallDetector():
                         change = distance/prev_distance
                         #print(change, centroid, base)
                         if change<0.45:
-                            print("***FALL DETECTED***")
+                            send_push_notification(device_token, message)
                         else:
                             pass
                 
