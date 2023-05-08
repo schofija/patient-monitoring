@@ -1,7 +1,7 @@
 # patient-monitoring
 ###### Jack Schofield, Null Atwood, Travis Hudson, Rohan B Ballapragada, Zachary Taylor, Jet Ittihrit, Aditya Raj
-[![foxy][foxy-badge]][foxy]
 [![ubuntu20][ubuntu20-badge]][ubuntu20]
+[![foxy][foxy-badge]][foxy]
 
 [![License](https://img.shields.io/github/license/schofija/patient-monitoring?style=flat-square)](LICENSE)
 
