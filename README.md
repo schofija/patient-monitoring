@@ -21,8 +21,7 @@ Setup
 
 1. Follow the [TurtleBot3 Quick Start Guide](https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/). Please ensure you are following the steps for "Foxy".
 2. Install the [ROS2 Wrapper for Intel® RealSense™ Devices](https://github.com/IntelRealSense/realsense-ros) on the TurtleBot's onboard PC.
-[ubuntu20-badge]: https://img.shields.io/badge/-UBUNTU%2020%2E04-blue?style=flat-square&logo=ubuntu&logoColor=white
-[ubuntu20]: https://releases.ubuntu.com/focal/
+
 After doing these steps, you should have the `turtlebot3_bringup` and `realsense2_camera` packages installed on your onboard PC. Next, we will bring up the robot (in order to communicate with the DYNAMIXEL actuators), and start the RealSense™ camera node.
 
 + To bring up the robot, run: `ros2 launch turtlebot3_bringup robot.launch.py`.
