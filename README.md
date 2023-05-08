@@ -5,7 +5,7 @@
 
 [![License](https://img.shields.io/github/license/schofija/patient-monitoring?style=flat-square)](LICENSE)
 
-The repository contains ROS 2 packages for patient detection. These packages are intended to be run on the remote PC. The patient-monitoring Android application can be found here: [pmr-app-test]( https://github.com/JetLiTheQT/pmrtest).
+The repository contains ROS 2 packages for patient detection. These packages are intended to be run on the remote PC. For the patient-monitoring Android application, go to [**pmr-app-test**]( https://github.com/JetLiTheQT/pmrtest).
 
 ### Requirements
 **Hardware:**
