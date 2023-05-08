@@ -5,7 +5,7 @@
 
 [![License](https://img.shields.io/github/license/schofija/patient-monitoring?style=flat-square)](LICENSE)
 
-The repository contains ROS 2 packages for patient detection. For the patient-monitoring Android application, go to [**pmr-app-test**]( https://github.com/JetLiTheQT/pmrtest).
+ROS2 packages for the patient-monitoring robot. For the patient-monitoring Android application, go to [**pmr-app-test**]( https://github.com/JetLiTheQT/pmrtest).
 
 ### Requirements
 **Hardware:**
