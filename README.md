@@ -3,6 +3,8 @@
 
 The repository contains ROS 2 packages for patient detection. These packages are intended to be run on the remote PC.
 
+For the PMR Android application, go to: https://github.com/JetLiTheQT/pmrtest
+
 ### Requirements
 **Hardware:**
 + TurtleBot 3 Waffle
