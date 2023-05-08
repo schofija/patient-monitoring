@@ -1,4 +1,7 @@
 # patient-monitoring
+[![ubuntu20][ubuntu20-badge]][ubuntu20]
+[![License](https://img.shields.io/github/license/IntelRealSense/realsense-ros?style=flat-square)](LICENSE)
+
 ###### Jack Schofield, Null Atwood, Travis Hudson, Rohan B Ballapragada, Zachary Taylor, Jet Ittihrit, Aditya Raj
 
 The repository contains ROS 2 packages for patient detection. These packages are intended to be run on the remote PC.
