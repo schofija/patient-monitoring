@@ -1,12 +1,11 @@
 # patient-monitoring
-[![ubuntu20][ubuntu20-badge]][ubuntu20]
-[![License](https://img.shields.io/github/license/IntelRealSense/realsense-ros?style=flat-square)](LICENSE)
-
 ###### Jack Schofield, Null Atwood, Travis Hudson, Rohan B Ballapragada, Zachary Taylor, Jet Ittihrit, Aditya Raj
+[![foxy][foxy-badge]][foxy]
+[![ubuntu20][ubuntu20-badge]][ubuntu20]
 
-The repository contains ROS 2 packages for patient detection. These packages are intended to be run on the remote PC.
+[![License](https://img.shields.io/github/license/schofija/patient-monitoring?style=flat-square)](LICENSE)
 
-For the PMR Android application, go to: https://github.com/JetLiTheQT/pmrtest
+The repository contains ROS 2 packages for patient detection. These packages are intended to be run on the remote PC. The patient-monitoring Android application can be found here: [pmr-app-test]( https://github.com/JetLiTheQT/pmrtest).
 
 ### Requirements
 **Hardware:**
@@ -22,7 +21,8 @@ Setup
 
 1. Follow the [TurtleBot3 Quick Start Guide](https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/). Please ensure you are following the steps for "Foxy".
 2. Install the [ROS2 Wrapper for Intel® RealSense™ Devices](https://github.com/IntelRealSense/realsense-ros) on the TurtleBot's onboard PC.
-
+[ubuntu20-badge]: https://img.shields.io/badge/-UBUNTU%2020%2E04-blue?style=flat-square&logo=ubuntu&logoColor=white
+[ubuntu20]: https://releases.ubuntu.com/focal/
 After doing these steps, you should have the `turtlebot3_bringup` and `realsense2_camera` packages installed on your onboard PC. Next, we will bring up the robot (in order to communicate with the DYNAMIXEL actuators), and start the RealSense™ camera node.
 
 + To bring up the robot, run: `ros2 launch turtlebot3_bringup robot.launch.py`.
@@ -37,3 +37,8 @@ From here, you can either run the Patient Monitoring Robot (PMR) package on a re
   + However, as this program requires heavy processing power, you may see better performance by running it on a remote PC.
 
 
+
+[ubuntu20-badge]: https://img.shields.io/badge/-UBUNTU%2020%2E04-blue?style=flat-square&logo=ubuntu&logoColor=white
+[ubuntu20]: https://releases.ubuntu.com/focal/
+[foxy-badge]: https://img.shields.io/badge/-FOXY-orange?style=flat-square&logo=ros
+[foxy]: https://docs.ros.org/en/foxy/index.html
