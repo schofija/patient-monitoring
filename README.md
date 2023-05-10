@@ -1,9 +1,11 @@
 # patient-monitoring
 ###### Jack Schofield, Null Atwood, Travis Hudson, Rohan B Ballapragada, Zachary Taylor, Jet Ittihrit, Aditya Raj
+[![Official Website](https://img.shields.io/badge/Official%20Website-PMR-blue?style=flat&logo=world&logoColor=white)]([https://agpt.co](https://pmr-osu.github.io/))
+[![License](https://img.shields.io/github/license/schofija/patient-monitoring?style=flat-square)](LICENSE)
+
 [![ubuntu20][ubuntu20-badge]][ubuntu20]
 [![foxy][foxy-badge]][foxy]
 
-[![License](https://img.shields.io/github/license/schofija/patient-monitoring?style=flat-square)](LICENSE)
 
 ROS2 packages for the patient-monitoring robot. For the patient-monitoring Android application, go to [**pmr-app-test**]( https://github.com/JetLiTheQT/pmrtest).
 
