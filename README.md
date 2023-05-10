@@ -1,6 +1,6 @@
 # patient-monitoring
 ###### Jack Schofield, Null Atwood, Travis Hudson, Rohan B Ballapragada, Zachary Taylor, Jet Ittihrit, Aditya Raj
-[![Official Website](https://img.shields.io/badge/Official%20Website-PMR-blue?style=flat&logo=world&logoColor=white)]([https://agpt.co](https://pmr-osu.github.io/))
+[![Official Website](https://img.shields.io/badge/Official%20Website-PMR-blue?style=flat&logo=world&logoColor=white)](https://pmr-osu.github.io/)
 [![License](https://img.shields.io/github/license/schofija/patient-monitoring?style=flat-square)](LICENSE)
 
 [![ubuntu20][ubuntu20-badge]][ubuntu20]
