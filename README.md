@@ -1,10 +1,11 @@
 
 # patient-monitoring
 ###### Jack Schofield, Null Atwood, Travis Hudson, Rohan B Ballapragada, Zachary Taylor, Jet Ittihrit, Aditya Raj
-[![Official Website](https://img.shields.io/badge/Official%20Website-pmr--osu-blue?style=flat&logo=world&logoColor=white)](https://pmr-osu.github.io/)
-[![License](https://img.shields.io/github/license/schofija/patient-monitoring?style=flat-square)](LICENSE)
+
 [![ubuntu20][ubuntu20-badge]][ubuntu20]
 [![foxy][foxy-badge]][foxy]
+[![Official Website](https://img.shields.io/badge/Official%20Website-pmr--osu-blue?style=flat&logo=world&logoColor=white)](https://pmr-osu.github.io/)
+[![License](https://img.shields.io/github/license/schofija/patient-monitoring?style=flat-square)](LICENSE)
 
 ROS2 packages for the patient-monitoring robot. For the patient-monitoring Android application, go to [**pmr-app-test**]( https://github.com/JetLiTheQT/pmrtest).
 ### Example GIF
@@ -27,6 +28,7 @@ ROS2 packages for the patient-monitoring robot. For the patient-monitoring Andro
 #### Hardware:
 + TurtleBot3 Waffle
 + Intel® RealSense™ Depth Camera
+
 *Note: The patient-monitoring nodes were tested using an Intel RealSense™ D405, but should function with any camera compatible with the Intel® RealSense™ ROS2 wrapper. Please inform us of any issues that arise using different camera models.*
 
 #### Software:
