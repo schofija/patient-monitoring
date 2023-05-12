@@ -11,13 +11,17 @@ ROS2 packages for the patient-monitoring robot. For the patient-monitoring Andro
 ![Alt Text: Demonstration of fall_detection ROS2 node](https://github.com/schofija/patient-monitoring/blob/master/fall.gif)
 ## Table of Contents
 
- - [Research](#research)
+ - [System Diagram](#system-diagram)
  - [Requirements](#requirements)
  - [Installation and Setup](#installation)
  - [Usage](#usage) 
 	 - [Starting the TurtleBot3 and RealSense™ nodes](#tb_rs_nodes)
 	 - [Starting the patient-monitoring nodes](#pmr_nodes)
+- [Research](#research)
 - [Legacy](#legacy)
+
+## System Diagram
+![Alt Text: Flow chart diagram of patient-monitoring system]()
 
 ## Requirements
 #### Hardware:
@@ -130,6 +134,19 @@ Uses positioning from ``Person`` message. Attempts to keep human at the center o
 ros2 run patient_monitoring fall_detection
 ```
 Uses landmark data from ``Person`` message to detect falling movements. Detected falls are pushed to a realtime database to display push notifications on the patient-monitoring android application ([pmr-app-test](https://github.com/JetLiTheQT/pmrtest))
+
+## Research
+<details>
+  <summary>User Research</summary>
+  
+- [Persona LifeCycle Research](https://github.com/schofija/patient-monitoring/blob/master/docs/Persona_LifeCycle_Research.pdf)
+</details>
+
+<details>
+  <summary>Abnormal Motion Research</summary>
+  
+- [Research article collection with annotations](https://github.com/schofija/patient-monitoring/blob/master/docs/Anormal_Motion_Research_Annotations.pdf)
+</details>
 
 ## Legacy
 - [**FortyFive-Robot_ws**](https://github.com/villanub2/FortyFive-Robot_ws) (2019-2020 Capstone) 
