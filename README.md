@@ -21,7 +21,7 @@ ROS2 packages for the patient-monitoring robot. For the patient-monitoring Andro
 - [Legacy](#legacy)
 
 ## System Diagram
-![Alt Text: Flow chart diagram of patient-monitoring system](https://github.com/schofija/patient-monitoring/blob/master/docs/system-diagram-pmr.png)
+![Alt Text: Flow chart diagram of patient-monitoring system](https://github.com/schofija/patient-monitoring/blob/master/docs/system-diagram-pmr-dark.png)
 
 ## Requirements
 #### Hardware:
