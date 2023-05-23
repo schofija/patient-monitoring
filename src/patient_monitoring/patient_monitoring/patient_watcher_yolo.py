@@ -99,6 +99,43 @@ class MyNode(Node):
                             line = '\rPerson detected! (%3d, %3d): %7.1f(mm).' % (person_detected.x, person_detected.y, depth_image[person_detected.y, person_detected.x])
                             print(line)
 
+                    # Pose calculation
+                    roi = cv_image[y:y+h, x:x+w]
+
+                    image_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
+                    results = self.pose_estimator.process(image_rgb)
+                    landmarks = results.pose_landmarks
+
+                    if (landmarks):
+                        landmarks = results.pose_landmarks.landmark
+                        x_max = -1
+                        y_max = -1
+                        x_min = w
+                        y_min = h
+                        for i in range(len(landmarks) - 1):
+                            landmark_msg = PersonLandmark()
+                            landmark_msg.x = landmarks[i].x
+                            landmark_msg.y = landmarks[i].y
+                            landmark_msg.z = landmarks[i].z
+                            landmark_msg.visibility = landmarks[i].visibility
+                            person_detected.landmarks.append(landmark_msg)
+                            x, y = int(landmarks[i].x * w), int(landmarks[i].y *h)
+                            if 0 <= x and x <= w:
+                                if x > x_max:
+                                    x_max = x
+                                if x < x_min:
+                                    x_min = x
+                            if 0 <= y and y <= h:
+                                if y > y_max:
+                                    y_max = y
+                                if y < y_min:
+                                    y_min = y
+                    mp_drawing.draw_landmarks(
+                       cv_image,
+                       results.pose_landmarks,
+                       mp_pose.POSE_CONNECTIONS,
+        			   landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())            
+
         self.publisher1.publish(person_detected)
           
         cv2.imshow('cv_image', cv_image)
