@@ -138,11 +138,16 @@ class MyNode(Node):
                                     y_max = y
                                 if y < y_min:
                                     y_min = y
-                    mp_drawing.draw_landmarks(
-                       cv_image,
-                       results.pose_landmarks,
-                       mp_pose.POSE_CONNECTIONS,
-        			   landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())            
+                        mp_drawing.draw_landmarks(
+                            cv_image,
+                            results.pose_landmarks,
+                            mp_pose.POSE_CONNECTIONS,
+        			        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())     
+                        for landmark in landmarks:
+                            landmark.x -= x
+                            landmark.y -= y
+                            landmark.x /= w/img_w
+                            landmark.y /= h/img_h    
 
         self.publisher1.publish(person_detected)
           
