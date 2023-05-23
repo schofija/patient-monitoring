@@ -111,6 +111,11 @@ class MyNode(Node):
 
                     if (landmarks):
                         landmarks = results.pose_landmarks.landmark
+                        for landmark in landmarks:
+                            landmark.x *= w/img_w
+                            landmark.y *= h/img_h
+                            landmark.x += x
+                            landmark.y += y
                         x_max = -1
                         y_max = -1
                         x_min = w
