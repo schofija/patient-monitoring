@@ -111,11 +111,6 @@ class MyNode(Node):
 
                     if (landmarks):
                         landmarks = results.pose_landmarks.landmark
-                        for landmark in landmarks:
-                            landmark.x *= w/img_w
-                            landmark.y *= h/img_h
-                            landmark.x += x
-                            landmark.y += y
                         x_max = -1
                         y_max = -1
                         x_min = w
@@ -142,12 +137,7 @@ class MyNode(Node):
                             cv_image,
                             results.pose_landmarks,
                             mp_pose.POSE_CONNECTIONS,
-        			        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())     
-                        for landmark in landmarks:
-                            landmark.x -= x
-                            landmark.y -= y
-                            landmark.x /= w/img_w
-                            landmark.y /= h/img_h    
+        			        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())       
 
         self.publisher1.publish(person_detected)
           
