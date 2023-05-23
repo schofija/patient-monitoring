@@ -45,6 +45,9 @@ class MyNode(Node):
         self.model = cv2.dnn_DetectionModel(self.config, self.weights)
         self.model.setInputParams(size=(416, 416), scale=1/255, swapRB=True)
 
+        # Initialize Mediapipe Pose Estimation
+        self.pose_estimator = mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.3)
+
     def callback(self, msg: Image, msg_depth: Image):
         cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         depth_image = self.bridge.imgmsg_to_cv2(msg_depth, msg_depth.encoding)
