@@ -111,14 +111,11 @@ class MyNode(Node):
 
                     if (landmarks):
                         landmarks = results.pose_landmarks.landmark
-<<<<<<< HEAD
                        # for landmark in landmarks:
                        #     landmark.x *= w/img_w
                         #    landmark.y *= h/img_h
                        #     landmark.x += x
                        #     landmark.y += y
-=======
->>>>>>> 84d35dbd2f834c01cae79a213eb570711ab00984
                         x_max = -1
                         y_max = -1
                         x_min = w
@@ -142,7 +139,6 @@ class MyNode(Node):
                                 if y < y_min:
                                     y_min = y
                         mp_drawing.draw_landmarks(
-<<<<<<< HEAD
                             roi,
                             results.pose_landmarks,
                             mp_pose.POSE_CONNECTIONS,
@@ -153,12 +149,6 @@ class MyNode(Node):
                        #     landmark.x /= w/img_w
                        #     landmark.y /= h/img_h 
                 break
-=======
-                            cv_image,
-                            results.pose_landmarks,
-                            mp_pose.POSE_CONNECTIONS,
-        			        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())       
->>>>>>> 84d35dbd2f834c01cae79a213eb570711ab00984
 
         self.publisher1.publish(person_detected)
           
