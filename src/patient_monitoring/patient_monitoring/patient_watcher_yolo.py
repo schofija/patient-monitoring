@@ -45,6 +45,9 @@ class MyNode(Node):
         self.model = cv2.dnn_DetectionModel(self.config, self.weights)
         self.model.setInputParams(size=(416, 416), scale=1/255, swapRB=True)
 
+        # Initialize Mediapipe Pose Estimation
+        self.pose_estimator = mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.3)
+
     def callback(self, msg: Image, msg_depth: Image):
         cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         depth_image = self.bridge.imgmsg_to_cv2(msg_depth, msg_depth.encoding)
@@ -98,6 +101,54 @@ class MyNode(Node):
                             person_detected.depth = person_detected.depth // count
                             line = '\rPerson detected! (%3d, %3d): %7.1f(mm).' % (person_detected.x, person_detected.y, depth_image[person_detected.y, person_detected.x])
                             print(line)
+
+                    # Pose calculation
+                    roi = cv_image[y:y+h, x:x+w]
+
+                    image_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
+                    results = self.pose_estimator.process(image_rgb)
+                    landmarks = results.pose_landmarks
+
+                    if (landmarks):
+                        landmarks = results.pose_landmarks.landmark
+                       # for landmark in landmarks:
+                       #     landmark.x *= w/img_w
+                        #    landmark.y *= h/img_h
+                       #     landmark.x += x
+                       #     landmark.y += y
+                        x_max = -1
+                        y_max = -1
+                        x_min = w
+                        y_min = h
+                        for i in range(len(landmarks) - 1):
+                            landmark_msg = PersonLandmark()
+                            landmark_msg.x = landmarks[i].x
+                            landmark_msg.y = landmarks[i].y
+                            landmark_msg.z = landmarks[i].z
+                            landmark_msg.visibility = landmarks[i].visibility
+                            person_detected.landmarks.append(landmark_msg)
+                            x, y = int(landmarks[i].x * w), int(landmarks[i].y *h)
+                            if 0 <= x and x <= w:
+                                if x > x_max:
+                                    x_max = x
+                                if x < x_min:
+                                    x_min = x
+                            if 0 <= y and y <= h:
+                                if y > y_max:
+                                    y_max = y
+                                if y < y_min:
+                                    y_min = y
+                        mp_drawing.draw_landmarks(
+                            roi,
+                            results.pose_landmarks,
+                            mp_pose.POSE_CONNECTIONS,
+        			        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())     
+                       # for landmark in landmarks:
+                       #     landmark.x -= x
+                       #     landmark.y -= y
+                       #     landmark.x /= w/img_w
+                       #     landmark.y /= h/img_h 
+                break
 
         self.publisher1.publish(person_detected)
           

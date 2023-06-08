@@ -46,26 +46,29 @@ class PatientSubscriber:
         # PATIENT DETECTED IN FRAME
         ##############################
         else:
+            temp = 0
             # Assuming left-handed coordinate system
             if msg_in.x < image_width//2 - follow_threshold:
                 print("rotate LEFT, msg_in.x==", msg_in.x)
                 msg_out.angular.z = self.max_ang #self.max_ang * (0.5 - msg_in.x + self.ang_thresh)
                 self.last_spotted_x = 1
                 self.x_sign = 0
+                temp = 1
             elif msg_in.x > image_width//2 + follow_threshold :
                 print("rotate RIGHT, msg_in.x==", msg_in.x)
                 msg_out.angular.z = (-1.) * self.max_ang #- self.max_ang * (0.5 - msg_in.x + self.ang_thresh)
                 self.last_spotted_x = 2
                 self.x_sign = 0
+                temp = 1
 
             human_depth = sum(self.depth)/len(self.depth)
-            if human_depth < 1500:
+            if human_depth < 800 and temp == 0:
                 # Set magnitude of velocity to max speed (fine tune later)
                 msg_out.linear.x = - self.max_vel
                 # Set direction of velocity 
                 self.x_sign = 1
                 print("BACKWARDS", human_depth)
-            elif human_depth  > 2500:
+            elif human_depth  > 1500 and temp == 0:
                 # Set magnitude of velocity to max speed (fine tune later)
                 msg_out.linear.x = self.max_vel
                 # Set direction of velocity 
